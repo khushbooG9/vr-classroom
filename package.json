@@ -8,6 +8,6 @@
   "author": "Tyson, Khush, Ashwini",
   "dependencies": {
     "@google-cloud/speech": "^2.3.1",
-    "networked-aframe": "^0.5.0"
+    "networked-aframe": "^0.6.1"
   }
 }
