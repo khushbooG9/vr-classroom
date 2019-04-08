@@ -1,0 +1,113 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>DR Training</title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <script src="https://aframe.io/releases/0.7.0/aframe.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.min.js"></script>
+    <script src="https://unpkg.com/aframe-environment-component/dist/aframe-environment-component.min.js"></script>
+    <script src="../easyrtc/easyrtc.js"></script>
+    <script src="https://unpkg.com/networked-aframe/dist/networked-aframe.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/aframe-room-component/dist/aframe-room-component.min.js"></script>
+  </head>
+  <body>
+    <!-- <audio id="player" controls></audio>
+    <script>
+        var player = document.getElementById('player');
+
+        var handleSuccess = function(stream) {
+            // console.log(window.URL);
+            console.log('test audio');
+            console.log(stream)
+            if (window.URL) {
+                player.srcObject = stream;
+            } else {
+                player.src = stream;
+            }
+        };
+
+        navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+        .then(handleSuccess);
+    </script> -->
+    <a-scene networked-scene="
+      app: myApp2;
+      room: room2;
+      debug: true;
+      adapter: easyrtc;
+      audio: true;
+     "
+     >
+        
+     <rw-room position="-2 0 -2" material="color:#FFDF00">
+            <rw-wall position="8 0 0"></rw-wall>
+            <rw-wall position="8 0 8"></rw-wall>
+            <rw-wall position="0 0 8">
+                <rw-doorhole id="holeE"></rw-doorhole>
+                <rw-doorlink from="#holeE" to="#holeF" position="4 0 0"></rw-doorlink>
+            </rw-wall>
+            <rw-wall position="0 0 0">
+                <rw-doorhole id="holeA"></rw-doorhole>
+                <rw-doorhole id="holeB"></rw-doorhole>
+                <rw-doorlink from="#holeA" to="#holeC" position="2.5 0 0"></rw-doorlink>
+                <rw-doorlink from="#holeB" to="#holeD" position="5.5 0 0"></rw-doorlink>
+            </rw-wall>
+        </rw-room>
+        <rw-room position="0 0 -3">
+            <rw-wall position=" 1 0 -1" material="color:#fff1d0"></rw-wall>
+            <rw-wall position=" 1 0  1" material="color:#778">
+                <rw-doorhole id="holeC"></rw-doorhole>
+            </rw-wall>
+            <rw-wall position="-1 0  1" material="color:#fff1d0"></rw-wall>
+            <rw-wall position="-1 0 -1" material="color:#778"></rw-wall>
+        </rw-room>
+        <rw-room position="4 0 -3">
+            <rw-wall position=" 1 0 -1" material="color:#fff1d0"></rw-wall>
+            <rw-wall position=" 1 0 1" material="color:#778">
+                <rw-doorhole id="holeD"></rw-doorhole>
+            </rw-wall>
+            <rw-wall position="-1 0 1" material="color:#fff1d0"></rw-wall>
+            <rw-wall position="-1 0 -1" material="color:#778"></rw-wall>
+        </rw-room>
+        <rw-room position="-3 0 2">
+            <rw-wall position=" 1 0 -2" material="color:#fff1d0">
+                <rw-doorhole id="holeF"></rw-doorhole>
+            </rw-wall>
+            <rw-wall position=" 1 0 2" material="color:#778"></rw-wall>
+            <rw-wall position="-3 0 2" material="color:#fff1d0"></rw-wall>
+            <rw-wall position="-3 0 -2" material="color:#778"></rw-wall>
+        </rw-room>
+    </a-scene>
+    <script>
+      function onConnect () {
+        console.log('On connected to NAF -', new Date());
+        NAF.connection.subscribeToDataChannel("presenter", (id, channel, data) => {
+              console.log("presenter")
+              console.log(data)
+              var sceneEl = document.querySelector('a-scene');
+              var presenterEl = sceneEl.querySelector('#cameraWrapper');
+              presenterEl.setAttribute('position', data.position);
+              presenterEl.setAttribute('rotation', data.rotation);
+        });
+
+        // Make a request for a user with a given ID
+        axios.get('/api')
+          .then((response) => {
+            // handle success
+            console.log(response);
+            var sceneEl = document.querySelector('a-scene');
+            var subtitle = sceneEl.querySelector('#subtitle');
+            subtitle.setAttribute('value', response.data);
+          })
+          .catch((error) => {
+            // handle error
+            console.log(error);
+          })
+          .then(() => {
+            // always executed
+          });
+      }
+    </script>
+  </body>
+</html>
